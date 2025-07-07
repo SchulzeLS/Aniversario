@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enigma das Poções de Snape - Versão Corrigida</title>
+    <title>Enigma das Poções de Snape </title>
     <style>
         /* ESTILOS GERAIS */
         body {
@@ -188,11 +188,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Enigma das Poções de Snape - Versão Corrigida</h1>
+        <h1>Enigma das Poções de Snape </h1>
         
         <div class="story">
-            <p>Você está na <strong>Sala de Poções</strong> de Hogwarts. Sete frascos estão alinhados, numerados de 1 a 7. Uma voz sibilante ecoa:</p>
-            <p class="snape-voice">"Apenas um frasco levará você adiante. Os outros contêm veneno mortal ou vinho de urtiga. Decifre meu enigma... ou pereça."</p>
+            <p>Você está na <strong>Sala de Poções</strong> de Hogwarts. Sete frascos estão alinhados, numerados de 1 a 7. A voz de Snape sibilante ecoa:</p>
+            <p class="snape-voice">"Harry, Apenas um frasco levará você adiante. Os outros contêm veneno mortal ou vinho de urtiga. Decifre meu enigma... ou pereça."</p>
         </div>
 
         <div id="timer">⏳ Tempo restante: <span id="time">02:00</span></div>
@@ -207,7 +207,7 @@
                 <li>O primeiro e o último frascos são iguais e nenhum é veneno (V).</li>
                 <li>Nenhum veneno (V) está ao lado de outro veneno.</li>
             </ol>
-            <p><em>Dica final: O Snape não está torcendo por você Harry.</em></p>
+            <p><em>Dica:Snape não está torcendo por você Harry.</em></p>
         </div>
 
         <!-- Dicas -->
@@ -215,7 +215,7 @@
             <p id="hint-text"></p>
             <p id="hint-penalty">Snape descontou 5 pontos da sua casa por fraqueza!</p>
         </div>
-        <button onclick="showHint()" id="hint-button">Pedir Ajuda a Hermione (Dica)</button>
+        <button onclick="showHint()" id="hint-button">Pedir Ajuda a Hermione, decore ou anote a informação, pois irá aparecer uma por vez, e não é possível ver a dica anterior. </button>
 
         <!-- Frascos -->
         <div id="potions-container">
@@ -341,7 +341,7 @@
             // Se selecionar frascos venenosos (4, 5 ou outro)
             else if (selectedPotions.includes(4) || selectedPotions.includes(5)) {
                 document.querySelector(`.potion[data-number="${selectedPotions[0]}"]`).classList.add("deadly");
-                resultDiv.innerHTML = '<p class="deadly-message">💀 Você bebeu veneno mortal! Snape ri enquanto você desmaia...</p>';
+                resultDiv.innerHTML = '<p class="deadly-message">💀 Você bebeu veneno mortal! Snape ri enquanto você desmaia...você acordará em 2 minutos</p>';
                 startTimer();
             }
             // Outras combinações erradas
@@ -359,12 +359,12 @@
                 riddleResult.innerHTML = '<p class="success">✨ Correto! A resposta é "sua respiração"!</p>';
                 riddleResult.innerHTML += '<p>Você dominou o desafio! <button onclick="celebrate()">Reivindicar sua recompensa</button></p>';
             } else {
-                riddleResult.innerHTML = '<p class="error">"Pense melhor... 10 pontos a menos para a sua casa!"</p>';
+                riddleResult.innerHTML = '<p class="error">"Harry, Pense melhor... 10 pontos a menos para a sua casa!"</p>';
             }
         }
 
         function celebrate() {
-            alert("⚡ Parabéns, bruxo(a)! Você ganhou: 50 pontos para sua casa e um pacote de Bertie Bott's!");
+            alert("⚡ Parabéns, bruxo(a)! Você ganhou: 50 pontos para sua casa e um próximo desafio!");
         }
     </script>
 </body>
