@@ -1,6 +1,6 @@
 /* css/styles.css */
 
-/* Estilos Gerais */
+/* ===== ESTILOS GERAIS ===== */
 body {
     background-image: url('https://images.unsplash.com/photo-1551269901-5c5e14c25df7');
     background-size: cover;
@@ -12,10 +12,11 @@ body {
     padding: 20px;
     font-family: 'Times New Roman', serif;
     color: #e0e0e0;
+    text-align: center;
     position: relative;
 }
 
-/* Camada escura semi-transparente */
+/* Camada escura para melhor contraste */
 body::before {
     content: "";
     position: fixed;
@@ -27,7 +28,7 @@ body::before {
     z-index: -1;
 }
 
-/* Container Principal */
+/* ===== CONTAINER PRINCIPAL ===== */
 .container {
     background-color: rgba(0, 0, 0, 0.8);
     border: 2px solid #946b2d;
@@ -39,7 +40,22 @@ body::before {
     position: relative;
 }
 
-/* Estilos para as Poções */
+/* ===== TIPOGRAFIA ===== */
+h1 {
+    color: #ffd700;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.snape-voice {
+    font-style: italic;
+    color: #b5b5b5;
+    border-left: 3px solid #946b2d;
+    padding-left: 10px;
+    margin: 15px 0;
+}
+
+/* ===== COMPONENTES DAS POÇÕES ===== */
 .potion {
     display: inline-block;
     width: 80px;
@@ -53,4 +69,152 @@ body::before {
     transition: all 0.3s;
 }
 
-/* [Adicione todos os outros estilos do seu projeto aqui...] */
+.potion::after {
+    content: attr(data-number);
+    position: absolute;
+    bottom: -25px;
+    left: 0;
+    right: 0;
+    color: white;
+    font-weight: bold;
+}
+
+/* Estados das poções */
+.selected {
+    box-shadow: 0 0 15px #ffd700;
+    border-color: #ffd700;
+}
+
+.deadly {
+    background: linear-gradient(to bottom, #450000, #8B0000);
+    animation: pulse 1.5s infinite;
+}
+
+.wine {
+    background: linear-gradient(to bottom, #4b0082, #800080);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.8; }
+}
+
+/* ===== BOTÕES E FORMULÁRIOS ===== */
+button {
+    background-color: #946b2d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: all 0.3s;
+}
+
+button:disabled {
+    background-color: #333;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background-color: #ffd700;
+    color: black;
+}
+
+input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #946b2d;
+    background-color: #1a1a1a;
+    color: white;
+}
+
+/* ===== MENSAGENS DE FEEDBACK ===== */
+#result {
+    margin: 20px;
+    font-size: 1.2em;
+    min-height: 50px;
+}
+
+.success {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.error {
+    color: #f44336;
+}
+
+.deadly-message {
+    color: #ff5555;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ff0000;
+}
+
+/* ===== COMPONENTES ESPECÍFICOS ===== */
+.next-riddle {
+    display: none;
+    margin-top: 30px;
+}
+
+.hint-box {
+    background-color: rgba(148, 107, 45, 0.2);
+    border-left: 3px solid #946b2d;
+    padding: 10px;
+    margin: 15px auto;
+    max-width: 80%;
+    text-align: left;
+    display: none;
+}
+
+#hint-penalty {
+    color: #f44336;
+    display: none;
+}
+
+#timer {
+    font-size: 1.5em;
+    color: #ff5555;
+    margin: 10px;
+    display: none;
+}
+
+.rules {
+    text-align: left;
+    margin: 20px auto;
+    max-width: 90%;
+}
+
+.rules li {
+    margin-bottom: 8px;
+    list-style-type: decimal;
+    padding-left: 5px;
+}
+
+#riddle-result {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .potion {
+        width: 60px;
+        height: 100px;
+        margin: 5px;
+    }
+    
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    input[type="text"] {
+        width: 80%;
+    }
+}
