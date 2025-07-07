@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enigma das Poções de Snape - Versão Corrigida</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: #0a0a20;
+            color: #e0e0e0;
+            text-align: center;
+            background-image: url('https://i.imgur.com/JYlZf7j.jpg');
+            background-size: cover;
+            padding: 20px;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid #946b2d;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 20px #946b2d;
+        }
+        h1 {
+            color: #ffd700;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px #000;
+        }
+        .snape-voice {
+            font-style: italic;
+            color: #b5b5b5;
+            border-left: 3px solid #946b2d;
+            padding-left: 10px;
+            margin: 15px 0;
+        }
+        .potion {
+            display: inline-block;
+            width: 80px;
+            height: 120px;
+            margin: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+            background: linear-gradient(to bottom, #2c3e50, #4ca1af);
+            transition: all 0.3s;
+        }
+        .potion::after {
+            content: attr(data-number);
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            color: white;
+            font-weight: bold;
+        }
+        .selected {
+            box-shadow: 0 0 15px #ffd700;
+            border-color: #ffd700;
+        }
+        .deadly {
+            background: linear-gradient(to bottom, #450000, #8B0000);
+            animation: pulse 1.5s infinite;
+        }
+        .wine {
+            background: linear-gradient(to bottom, #4b0082, #800080);
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+        button {
+            background-color: #946b2d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+        button:disabled {
+            background-color: #333;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background-color: #ffd700;
+            color: black;
+        }
+        #result {
+            margin: 20px;
+            font-size: 1.2em;
+            min-height: 50px;
+        }
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .error {
+            color: #f44336;
+        }
+        .deadly-message {
+            color: #ff5555;
+            font-weight: bold;
+            text-shadow: 0 0 5px #ff0000;
+        }
+        .next-riddle {
+            display: none;
+            margin-top: 30px;
+        }
+        .hint-box {
+            background-color: rgba(148, 107, 45, 0.2);
+            border-left: 3px solid #946b2d;
+            padding: 10px;
+            margin: 15px auto;
+            max-width: 80%;
+            text-align: left;
+            display: none;
+        }
+        #hint-penalty {
+            color: #f44336;
+            display: none;
+        }
+        #timer {
+            font-size: 1.5em;
+            color: #ff5555;
+            margin: 10px;
+            display: none;
+        }
+        .rules {
+            text-align: left;
+            margin: 20px auto;
+            max-width: 90%;
+        }
+        .rules li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enigma das Poções de Snape - Versão Corrigida</h1>
+        
+        <div class="story">
+            <p>Você está na <strong>Sala de Poções</strong> de Hogwarts. Sete frascos estão alinhados, numerados de 1 a 7. Uma voz sibilante ecoa:</p>
+            <p class="snape-voice">"Apenas um frasco levará você adiante. Os outros contêm veneno mortal ou vinho de urtiga. Decifre meu enigma... ou pereça."</p>
+        </div>
+
+        <div id="timer">⏳ Tempo restante: <span id="time">02:00</span></div>
+
+        <div class="rules">
+            <h2>Enigma:</h2>
+            <ol>
+                <li>① Há exatamente três frascos de veneno (V) e dois de vinho de urtiga (U).</li>
+                <li>② O frasco mais alto está imediatamente à esquerda de um vinho de urtiga (U).</li>
+                <li>③ O frasco correto (C) está entre dois frascos de naturezas diferentes (um veneno e um vinho, em qualquer ordem).</li>
+                <li>④ O segundo e o sexto frascos não são veneno (V) e são diferentes entre si.</li>
+                <li>⑤ O primeiro e o último frascos são iguais e nenhum é veneno (V).</li>
+                <li>⑥ Nenhum veneno (V) está ao lado de outro veneno.</li>
+            </ol>
+            <p><em>Dica final: O caminho seguro não é nem o mais à esquerda, nem o mais à direita.</em></p>
+        </div>
+
+        <!-- Dicas -->
+        <div class="hint-box" id="potion-hint">
+            <p id="hint-text"></p>
+            <p id="hint-penalty">Snape descontou 5 pontos da sua casa por fraqueza!</p>
+        </div>
+        <button onclick="showHint()" id="hint-button">Pedir Ajuda a Hermione (Dica)</button>
+
+        <!-- Frascos -->
+        <div id="potions-container">
+            <div class="potion" data-number="1" onclick="selectPotion(1)"></div>
+            <div class="potion" data-number="2" onclick="selectPotion(2)"></div>
+            <div class="potion" data-number="3" onclick="selectPotion(3)"></div>
+            <div class="potion" data-number="4" onclick="selectPotion(4)"></div>
+            <div class="potion" data-number="5" onclick="selectPotion(5)"></div>
+            <div class="potion" data-number="6" onclick="selectPotion(6)"></div>
+            <div class="potion" data-number="7" onclick="selectPotion(7)"></div>
+        </div>
+
+        <button onclick="checkAnswer()" id="submit-button">Verificar Resposta</button>
+        
+        <div id="result"></div>
+        
+        <div id="next-riddle" class="next-riddle">
+            <h2>Parabéns! Você sobreviveu às poções!</h2>
+            <p class="snape-voice">"Ainda não acabou... Decifre isto:"</p>
+            <p><em>"O que é leve como uma pena, mas nenhum homem pode segurar por muito tempo?"</em></p>
+            
+            <input type="text" id="riddle-answer" placeholder="Sua resposta...">
+            <button onclick="checkRiddleAnswer()">Enviar</button>
+            <div id="riddle-result" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let selectedPotions = [];
+        let hintUsed = 0;
+        let timer;
+        let timeLeft = 120; // 2 minutos em segundos
+        const potionHints = [
+            "Dica 1: Os frascos 1 e 7 são iguais e não são veneno (pista ⑤).",
+            "Dica 2: O frasco mais alto está à esquerda de um vinho de urtiga (pista ②).",
+            "Dica 3: O frasco correto está entre dois de tipos diferentes (pista ③)."
+        ];
+
+        // Funções
+        function selectPotion(number) {
+            if (document.getElementById("submit-button").disabled) return; // Bloqueia durante o timer
+            
+            const potion = document.querySelector(`.potion[data-number="${number}"]`);
+            
+            // Limpa seleções anteriores (permite apenas 1 seleção)
+            document.querySelectorAll(".potion").forEach(p => {
+                p.classList.remove("selected");
+                p.classList.remove("deadly");
+                p.classList.remove("wine");
+            });
+            
+            selectedPotions = [number];
+            potion.classList.add("selected");
+        }
+        
+        function showHint() {
+            if (document.getElementById("submit-button").disabled) return; // Bloqueia durante o timer
+            
+            const hintBox = document.getElementById("potion-hint");
+            const hintText = document.getElementById("hint-text");
+            const penaltyText = document.getElementById("hint-penalty");
+            
+            if (hintUsed >= potionHints.length) {
+                penaltyText.style.display = "block";
+                hintText.textContent = "Você esgotou suas dicas!";
+                document.getElementById("hint-button").style.backgroundColor = "#666";
+                return;
+            }
+            
+            hintText.textContent = potionHints[hintUsed];
+            hintBox.style.display = "block";
+            hintUsed++;
+        }
+        
+        function startTimer() {
+            document.getElementById("timer").style.display = "block";
+            document.getElementById("submit-button").disabled = true;
+            document.getElementById("hint-button").disabled = true;
+            document.querySelectorAll(".potion").forEach(p => p.style.pointerEvents = "none");
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById("timer").style.display = "none";
+                    document.getElementById("submit-button").disabled = false;
+                    document.getElementById("hint-button").disabled = false;
+                    document.querySelectorAll(".potion").forEach(p => p.style.pointerEvents = "auto");
+                    timeLeft = 120; // Reseta o timer
+                }
+            }, 1000);
+        }
+        
+        function checkAnswer() {
+            const resultDiv = document.getElementById("result");
+            
+            // Resetar animações
+            document.querySelectorAll(".potion").forEach(p => {
+                p.classList.remove("deadly");
+                p.classList.remove("wine");
+            });
+            
+            // Resposta CORRETA: Apenas o frasco 3
+            if (selectedPotions.length === 1 && selectedPotions[0] === 3) {
+                resultDiv.innerHTML = '<p class="success">✨ Correto! O frasco 3 te leva adiante!</p>';
+                document.getElementById("next-riddle").style.display = "block";
+                
+                // Efeitos visuais
+                document.querySelectorAll(".potion").forEach(p => p.style.opacity = "0.5");
+                document.querySelector(".potion[data-number='3']").style.boxShadow = "0 0 20px #4CAF50";
+                
+                // Mostrar distribuição correta (opcional)
+                document.querySelector(".potion[data-number='1']").classList.add("wine");
+                document.querySelector(".potion[data-number='4']").classList.add("deadly");
+                document.querySelector(".potion[data-number='5']").classList.add("deadly");
+                document.querySelector(".potion[data-number='7']").classList.add("wine");
+            } 
+            // Se selecionar frascos venenosos (4, 5 ou outro)
+            else if (selectedPotions.includes(4) || selectedPotions.includes(5)) {
+                document.querySelector(`.potion[data-number="${selectedPotions[0]}"]`).classList.add("deadly");
+                resultDiv.innerHTML = '<p class="deadly-message">💀 Você bebeu veneno mortal! Snape ri enquanto você desmaia...</p>';
+                startTimer();
+            }
+            // Outras combinações erradas
+            else {
+                resultDiv.innerHTML = '<p class="error">❌ Errado! Snape te condena a 2 minutos de espera antes de tentar novamente.</p>';
+                startTimer();
+            }
+        }
+
+        function checkRiddleAnswer() {
+            const userAnswer = document.getElementById("riddle-answer").value.toLowerCase();
+            const riddleResult = document.getElementById("riddle-result");
+            
+            if (userAnswer.includes("respiração") || userAnswer.includes("respiracao") || userAnswer.includes("ar")) {
+                riddleResult.innerHTML = '<p class="success">✨ Correto! A resposta é "sua respiração"!</p>';
+                riddleResult.innerHTML += '<p>Você dominou o desafio! <button onclick="celebrate()">Reivindicar sua recompensa</button></p>';
+            } else {
+                riddleResult.innerHTML = '<p class="error">"Pense melhor... 10 pontos a menos para a sua casa!"</p>';
+            }
+        }
+
+        function celebrate() {
+            alert("⚡ Parabéns, bruxo(a)! Você ganhou: 50 pontos para sua casa e um pacote de Bertie Bott's!");
+        }
+    </script>
+</body>
+</html>
