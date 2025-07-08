@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enigma das Poções de Snape </title>
+    <title>Enigma das Poções de Snape</title>
     <style>
-        /* ESTILOS GERAIS */
         body {
             font-family: 'Times New Roman', serif;
             color: #e0e0e0;
@@ -21,7 +20,6 @@
             position: relative;
         }
 
-        /* CAMADA ESCURA PARA CONTRASTE */
         body::before {
             content: "";
             position: fixed;
@@ -33,7 +31,6 @@
             z-index: -1;
         }
 
-        /* CONTAINER PRINCIPAL */
         .container {
             background-color: rgba(0, 0, 0, 0.8);
             border: 2px solid #946b2d;
@@ -59,7 +56,6 @@
             margin: 15px 0;
         }
 
-        /* ESTILOS DAS POÇÕES */
         .potion {
             display: inline-block;
             width: 80px;
@@ -103,7 +99,6 @@
             100% { opacity: 0.8; }
         }
 
-        /* BOTÕES E INTERAÇÕES */
         button {
             background-color: #946b2d;
             color: white;
@@ -125,7 +120,6 @@
             color: black;
         }
 
-        /* MENSAGENS E FEEDBACK */
         #result {
             margin: 20px;
             font-size: 1.2em;
@@ -147,7 +141,6 @@
             text-shadow: 0 0 5px #ff0000;
         }
 
-        /* OUTROS COMPONENTES */
         .next-riddle {
             display: none;
             margin-top: 30px;
@@ -184,11 +177,101 @@
         .rules li {
             margin-bottom: 8px;
         }
+
+        /* Estilos para o desafio final */
+        .energy-challenge {
+            background-color: rgba(22, 22, 26, 0.9);
+            border: 2px solid #2cb67d;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .energy-symbols {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .energy-symbol {
+            width: 80px;
+            height: 80px;
+            background-color: #16161a;
+            border: 2px solid #2cb67d;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .energy-symbol.selected {
+            background-color: #2cb67d;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(44, 182, 125, 0.5);
+        }
+        
+        .energy-sequence {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            min-height: 100px;
+        }
+        
+        .sequence-slot {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #7f5af0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            background-color: rgba(127, 90, 240, 0.1);
+        }
+        
+        #energy-hint {
+            display: none;
+            background-color: rgba(44, 182, 125, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .reward-image {
+            max-width: 250px;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: none;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+        }
+        
+        #final-reward {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 1.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Enigma das Poções de Snape </h1>
+        <h1>Enigma das Poções de Snape</h1>
         
         <div class="story">
             <p>Você está na <strong>Sala de Poções</strong> de Hogwarts. Sete frascos estão alinhados, numerados de 1 a 7. A voz de Snape sibilante ecoa:</p>
@@ -200,24 +283,22 @@
         <div class="rules">
             <h2>Enigma:</h2>
             <ol>
-                <li>Há exatamente três frascos de veneno (V) e dois de vinho de urtiga (U).</li>
+                <li>Há exatamente dois frascos de veneno (V) e três de vinho de urtiga (U). O restante é o frasco correto (C).</li>
                 <li>O frasco mais alto está imediatamente à esquerda de um vinho de urtiga (U).</li>
                 <li>O frasco correto (C) está entre dois frascos de naturezas diferentes (um veneno e um vinho, em qualquer ordem).</li>
                 <li>O segundo e o sexto frascos não são veneno (V) e são diferentes entre si.</li>
                 <li>O primeiro e o último frascos são iguais e nenhum é veneno (V).</li>
-                <li>Nenhum veneno (V) está ao lado de outro veneno.</li>
+                <li>Nenhum vinho (U) está ao lado de outro vinho.</li>
             </ol>
-            <p><em>Dica:Snape não está torcendo por você Harry.</em></p>
+            <p><em>Dica: Snape não está torcendo por você Harry.</em></p>
         </div>
 
-        <!-- Dicas -->
         <div class="hint-box" id="potion-hint">
             <p id="hint-text"></p>
             <p id="hint-penalty">Snape descontou 5 pontos da sua casa por fraqueza!</p>
         </div>
-        <button onclick="showHint()" id="hint-button">Peça a ajuda de Hermione. Dica: decore ou anote a informação, pois irá aparecer uma por vez, e não é possível ver a dica anterior. </button>
+        <button onclick="showHint()" id="hint-button">Peça a ajuda de Hermione. Dica: decore ou anote a informação, pois irá aparecer uma por vez, e não é possível ver a dica anterior.</button>
 
-        <!-- Frascos -->
         <div id="potions-container">
             <div class="potion" data-number="1" onclick="selectPotion(1)"></div>
             <div class="potion" data-number="2" onclick="selectPotion(2)"></div>
@@ -248,20 +329,18 @@
         let selectedPotions = [];
         let hintUsed = 0;
         let timer;
-        let timeLeft = 120; // 2 minutos em segundos
+        let timeLeft = 120;
         const potionHints = [
             "Dica 1: Os frascos 1 e 7 são iguais e não são veneno (pista ⑤).",
-            "Dica 2: O frasco mais alto está à esquerda de um vinho de urtiga (pista ②).",
-            "Dica 3: O frasco correto está entre dois de tipos diferentes (pista ③)."
+            "Dica 2: O frasco 3 é veneno e está à direita do frasco correto (pista ② e ③).",
+            "Dica 3: O frasco 5 é veneno e não está ao lado de outro veneno (pista ⑥)."
         ];
 
-        // Funções
         function selectPotion(number) {
-            if (document.getElementById("submit-button").disabled) return; // Bloqueia durante o timer
+            if (document.getElementById("submit-button").disabled) return;
             
             const potion = document.querySelector(`.potion[data-number="${number}"]`);
             
-            // Limpa seleções anteriores (permite apenas 1 seleção)
             document.querySelectorAll(".potion").forEach(p => {
                 p.classList.remove("selected");
                 p.classList.remove("deadly");
@@ -273,7 +352,7 @@
         }
         
         function showHint() {
-            if (document.getElementById("submit-button").disabled) return; // Bloqueia durante o timer
+            if (document.getElementById("submit-button").disabled) return;
             
             const hintBox = document.getElementById("potion-hint");
             const hintText = document.getElementById("hint-text");
@@ -309,7 +388,7 @@
                     document.getElementById("submit-button").disabled = false;
                     document.getElementById("hint-button").disabled = false;
                     document.querySelectorAll(".potion").forEach(p => p.style.pointerEvents = "auto");
-                    timeLeft = 120; // Reseta o timer
+                    timeLeft = 120;
                 }
             }, 1000);
         }
@@ -317,36 +396,37 @@
         function checkAnswer() {
             const resultDiv = document.getElementById("result");
             
-            // Resetar animações
             document.querySelectorAll(".potion").forEach(p => {
                 p.classList.remove("deadly");
                 p.classList.remove("wine");
             });
             
-            // Resposta CORRETA: Apenas o frasco 3
-            if (selectedPotions.length === 1 && selectedPotions[0] === 3) {
-                resultDiv.innerHTML = '<p class="success">✨ Correto! O frasco 3 te leva adiante!</p>';
+            // SOLUÇÃO CORRETA: Frasco 2 (entre U1 e V3)
+            if (selectedPotions.length === 1 && selectedPotions[0] === 2) {
+                resultDiv.innerHTML = '<p class="success">✨ Correto! O frasco 2 te leva adiante!</p>';
                 document.getElementById("next-riddle").style.display = "block";
                 
-                // Efeitos visuais
                 document.querySelectorAll(".potion").forEach(p => p.style.opacity = "0.5");
-                document.querySelector(".potion[data-number='3']").style.boxShadow = "0 0 20px #4CAF50";
+                document.querySelector(".potion[data-number='2']").style.boxShadow = "0 0 20px #4CAF50";
                 
-                // Mostrar distribuição correta (opcional)
+                // Mostrar distribuição correta:
+                // 1=U, 2=C, 3=V, 4=U, 5=V, 6=U, 7=U
                 document.querySelector(".potion[data-number='1']").classList.add("wine");
-                document.querySelector(".potion[data-number='4']").classList.add("deadly");
+                document.querySelector(".potion[data-number='3']").classList.add("deadly");
+                document.querySelector(".potion[data-number='4']").classList.add("wine");
                 document.querySelector(".potion[data-number='5']").classList.add("deadly");
+                document.querySelector(".potion[data-number='6']").classList.add("wine");
                 document.querySelector(".potion[data-number='7']").classList.add("wine");
             } 
-            // Se selecionar frascos venenosos (4, 5 ou outro)
-            else if (selectedPotions.includes(4) || selectedPotions.includes(5)) {
+            // Venenos são frascos 3 e 5
+            else if (selectedPotions.includes(3) || selectedPotions.includes(5)) {
                 document.querySelector(`.potion[data-number="${selectedPotions[0]}"]`).classList.add("deadly");
-                resultDiv.innerHTML = '<p class="deadly-message">💀 Você bebeu veneno mortal! Snape ri enquanto você desmaia...você acordará em 2 minutos</p>';
+                resultDiv.innerHTML = '<p class="deadly-message">💀 Você bebeu veneno mortal! Snape ri enquanto você desmaia...</p>';
                 startTimer();
             }
-            // Outras combinações erradas
+            // Outras respostas erradas
             else {
-                resultDiv.innerHTML = '<p class="error">❌ Errado! Snape te condena a 2 minutos de espera antes de tentar novamente.</p>';
+                resultDiv.innerHTML = '<p class="error">❌ Errado! Snape te condena a 2 minutos de espera.</p>';
                 startTimer();
             }
         }
@@ -364,7 +444,129 @@
         }
 
         function celebrate() {
-            alert("⚡ Parabéns, bruxo(a)! Você ganhou: 50 pontos para sua casa e um próximo desafio!");
+            document.querySelector('.container').style.display = 'none';
+            
+            const rewardContainer = document.createElement('div');
+            rewardContainer.className = 'container';
+            rewardContainer.innerHTML = `
+                <h1>Desafio da Energia Tríplice</h1>
+                
+                <div class="story">
+                    <p class="snape-voice">"Potter, você encontrou o Artefato de Carregamento Ancestral. Mas dominá-lo requer compreender seus três aspectos fundamentais..."</p>
+                    <p>Três símbolos brilham no ar, representando os componentes essenciais:</p>
+                </div>
+
+                <div class="energy-challenge">
+                    <div class="riddle-text">
+                        <p><strong>Decifre a ordem correta:</strong></p>
+                        <p>1.A <em>Fonte de Energia</em> (que flui como magia sem varinha) </p>
+                        <p>2.O <em>Comunicador Mágico</em> (como um deluminador aprimorado) </p>
+                        <p>3.O <em>Guardião do Tempo</em> (mais preciso que um vira-tempo) </p>
+                    </div>
+                    
+                    <div class="energy-symbols">
+                        <div class="energy-symbol" draggable="true" ondragstart="drag(event)">⚡</div>
+                        <div class="energy-symbol" draggable="true" ondragstart="drag(event)">📱</div>
+                        <div class="energy-symbol" draggable="true" ondragstart="drag(event)">⌚</div>
+                    </div>
+                    
+                    <p>Arraste os símbolos para a ordem correta:</p>
+                    
+                    <div class="energy-sequence" id="energy-sequence">
+                        <div class="sequence-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        <div class="sequence-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        <div class="sequence-slot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    
+                    <div id="energy-hint">
+                        <p><strong>Dica:</strong> Pense na ordem em que você conectaria tudo.</p>
+                        <p>Qual deles precisa estar pronto primeiro para que os outros funcionem?</p>
+                    </div>
+                    
+                    <button onclick="showEnergyHint()" id="hint-button">Revelar Dica</button>
+                    <button onclick="checkEnergySequence()" id="check-sequence">Verificar Ordem</button>
+                    
+                    <div id="energy-result" style="margin-top: 20px;"></div>
+                    
+                    <img src="https://i.imgur.com/JQ7Z5Qj.jpg" class="reward-image" id="reward-image" style="display: none;">
+                    
+                    <div id="final-reward" style="display: none; margin-top: 30px;">
+                        <h2>✨ Base de Carregamento Tríplice Desbloqueada! ✨</h2>
+                        <p>Você dominou os três princípios:</p>
+                        <ol>
+                            <li><strong>Fonte de Energia (⚡)</strong> - A magia sem fio que alimenta tudo</li>
+                            <li><strong>Comunicador Mágico (📱)</strong> - Seu portal para o mundo trouxa</li>
+                            <li><strong>Guardião do Tempo (⌚)</strong> - Registra seus feitos e saúde</li>
+                        </ol>
+                        <p>Agora você possui a rara <strong>Base de Carregamento 3-em-1</strong> que até os Comensais da Morte cobiçam!</p>
+                        <button onclick="location.reload()">Voltar ao Início</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(rewardContainer);
+        }
+
+        // Funções para o desafio de energia
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.textContent);
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            const slot = event.target;
+            
+            if (slot.textContent === '') {
+                slot.textContent = data;
+                checkAutoComplete();
+            }
+        }
+
+        function showEnergyHint() {
+            document.getElementById('energy-hint').style.display = 'block';
+            document.getElementById('hint-button').disabled = true;
+        }
+
+        function checkEnergySequence() {
+            const slots = document.querySelectorAll('.sequence-slot');
+            const sequence = Array.from(slots).map(slot => slot.textContent);
+            const resultDiv = document.getElementById('energy-result');
+            
+            // Sequência correta: Energia → Celular → Relógio
+            if (sequence.join('') === '⚡📱⌚') {
+                resultDiv.innerHTML = '<p class="success">✅ Ordem Correta! A energia flui perfeitamente!</p>';
+                document.getElementById('reward-image').style.display = 'block';
+                document.getElementById('final-reward').style.display = 'block';
+                
+                // Desativa interação
+                document.querySelectorAll('.energy-symbol').forEach(s => {
+                    s.style.pointerEvents = 'none';
+                });
+                document.getElementById('check-sequence').disabled = true;
+            } else {
+                resultDiv.innerHTML = '<p class="error">❌ A energia não flui nessa ordem. Tente novamente!</p>';
+                
+                // Efeito visual de erro
+                slots.forEach(slot => {
+                    slot.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        slot.style.animation = '';
+                    }, 500);
+                });
+            }
+        }
+
+        function checkAutoComplete() {
+            const slots = document.querySelectorAll('.sequence-slot');
+            const isComplete = Array.from(slots).every(slot => slot.textContent !== '');
+            if (isComplete) {
+                checkEnergySequence();
+            }
         }
     </script>
 </body>
